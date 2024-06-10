@@ -40,7 +40,7 @@ class StarsBackground extends SpriteComponent with HasGameReference<RTSGame> {
   @override
   void update(double dt) {
     super.update(dt);
-    //based on camera movement move the background to create illusion of infinite back ground
+    //based on camera movement move the background to create illusion of infinite background
     adjustBackgroundPosition();
   }
 }
