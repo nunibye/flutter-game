@@ -1,15 +1,21 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:flame/components.dart';
+import 'package:flame/effects.dart';
 import 'package:flame/events.dart';
 import 'package:flame/experimental.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:game/actors/background.dart';
+import 'package:game/actors/missile.dart';
 import 'package:game/actors/planet.dart';
 import 'package:game/constants/animated_asset_enum.dart';
 import 'package:game/constants/constants.dart' as c;
+import 'package:game/constants/functions.dart';
 import 'package:game/constants/game_event_enum.dart';
+import 'package:game/constants/missile_enum.dart';
 import 'package:game/types/event.dart';
+import 'package:game/types/missile_event_payload.dart';
 
 class RTSGame extends FlameGame with ScaleDetector {
   //planet for testing mainly
@@ -90,7 +96,21 @@ class RTSGame extends FlameGame with ScaleDetector {
       case GameEvent.none:
         return;
       case GameEvent.missileLaunch:
-        print("launch");
+        final payload = (event.payload as MissileEventPayload);
+        final missile = Missile(missileData: payload.missileData);
+        missile.position = payload.start;
+        missile.angle = getAngle(payload.start, payload.end);
+        world.add(missile
+          ..add(MoveToEffect(
+            payload.end,
+            EffectController(
+              duration: getTime(
+                  payload.start, payload.end, payload.missileData.speed),
+            ),
+            onComplete: () {
+              world.remove(missile);
+            },
+          )));
         return;
     }
   }
