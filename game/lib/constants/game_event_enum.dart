@@ -1,0 +1,3 @@
+enum GameEvent{
+  none, missileLaunch
+}

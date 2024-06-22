@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:game/game_widget.dart';
+import 'package:flutter/services.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Future.wait([
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []),
+    SystemChrome.setPreferredOrientations(
+        [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]),
+  ]);
+
   runApp(const MyApp());
 }
 

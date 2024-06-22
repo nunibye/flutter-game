@@ -6,14 +6,21 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:game/actors/background.dart';
 import 'package:game/actors/planet.dart';
+import 'package:game/constants/animated_asset_enum.dart';
+import 'package:game/constants/constants.dart' as c;
+import 'package:game/constants/game_event_enum.dart';
+import 'package:game/types/event.dart';
 
 class RTSGame extends FlameGame with ScaleDetector {
   //planet for testing mainly
   late Planet planetA;
   late Planet planetB;
   late TextComponent _playerScore;
-
-  final allowedCameraArea = Vector2(10000, 10000);
+  //events that will happen this cycle
+  final _currentCommandList = List<Event>.empty(growable: true);
+  //events that will happen next cycle
+  final _nextCommandList = List<Event>.empty(growable: true);
+  final allowedCameraArea = Vector2(100, 400);
   //Set background color
   @override
   Color backgroundColor() => Colors.black;
@@ -21,7 +28,7 @@ class RTSGame extends FlameGame with ScaleDetector {
   @override
   Future<void> onLoad() async {
     //load all images
-    await images.loadAll(['3824724667_terran_wet.png', 'background.png']);
+    await images.loadAll(c.imageAssets);
 
     //create background
     final background = StarsBackground()..anchor = Anchor.center;
@@ -46,8 +53,9 @@ class RTSGame extends FlameGame with ScaleDetector {
       ),
     );
 
-    planetA = Planet(position: Vector2.all(0));
-    planetB = Planet(position: Vector2(400, 300));
+    planetA =
+        Planet(position: Vector2(-200, 0), assetData: AnimatedAsset.terra);
+    planetB = Planet(position: Vector2(200, 0), assetData: AnimatedAsset.terra);
     //add HUD elements
     await camera.viewport.add(_playerScore);
     //add game elements
@@ -61,6 +69,29 @@ class RTSGame extends FlameGame with ScaleDetector {
     if (!currentScale.isIdentity()) {
       final delta = info.delta.global;
       camera.moveBy(-delta);
+    }
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    _currentCommandList.forEach(processEvent);
+    _currentCommandList.clear();
+    _currentCommandList.addAll(_nextCommandList);
+    _nextCommandList.clear();
+  }
+
+  void addEvent(Event e) {
+    _nextCommandList.add(e);
+  }
+
+  void processEvent(Event event) {
+    switch (event.type) {
+      case GameEvent.none:
+        return;
+      case GameEvent.missileLaunch:
+        print("launch");
+        return;
     }
   }
 }
