@@ -14,3 +14,9 @@ double getAngle(Vector2 p1, Vector2 p2) {
 double getTime(Vector2 p1, Vector2 p2, int speed) {
   return p1.distanceTo(p2) / speed;
 }
+
+dynamic getRandomItemFromList(List<dynamic> list){
+  Random random = Random();
+  int index = random.nextInt(list.length);
+  return list[index];
+}

@@ -1,21 +1,48 @@
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
-import 'package:game/actors/missile.dart';
 import 'package:game/constants/animated_asset_enum.dart';
+import 'package:game/constants/functions.dart';
 import 'package:game/constants/game_event_enum.dart';
 import 'package:game/constants/missile_enum.dart';
+import 'package:game/constants/planet_type_enum.dart';
 import 'package:game/rts_game.dart';
 import 'package:game/types/event.dart';
 import 'package:game/types/missile_event_payload.dart';
 
 class Planet extends SpriteAnimationComponent
     with HasGameReference<RTSGame>, TapCallbacks {
-  final AnimatedAsset assetData;
-  Planet({required super.position, required this.assetData})
+  final PlanetType planetType;
+  Planet({required super.position, required this.planetType})
       : super(size: Vector2.all(50), anchor: Anchor.center);
+
+  AnimatedAsset chooseAsset() {
+    switch (planetType) {
+      case PlanetType.friendly:
+        return getRandomItemFromList([
+          AnimatedAsset.friendlyPlanet1,
+          AnimatedAsset.friendlyPlanet2,
+          AnimatedAsset.friendlyPlanet3
+        ]);
+      case PlanetType.enemy:
+        return getRandomItemFromList([
+          AnimatedAsset.enemyPlanet1,
+          AnimatedAsset.enemyPlanet2,
+          AnimatedAsset.enemyPlanet3
+        ]);
+      case PlanetType.none:
+        return getRandomItemFromList([
+          AnimatedAsset.emptyPlanet1,
+          AnimatedAsset.emptyPlanet2,
+        ]);
+      case PlanetType.dead:
+        return AnimatedAsset.deadPlanet1;
+    }
+  }
 
   @override
   Future<void> onLoad() async {
+    await super.onLoad();
+    final assetData = chooseAsset();
     animation = SpriteAnimation.fromFrameData(
       game.images.fromCache(assetData.assetName),
       SpriteAnimationData.sequenced(

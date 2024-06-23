@@ -7,6 +7,7 @@ import 'package:flame/experimental.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:game/actors/background.dart';
+import 'package:game/actors/explosion.dart';
 import 'package:game/actors/missile.dart';
 import 'package:game/actors/planet.dart';
 import 'package:game/constants/animated_asset_enum.dart';
@@ -14,8 +15,10 @@ import 'package:game/constants/constants.dart' as c;
 import 'package:game/constants/functions.dart';
 import 'package:game/constants/game_event_enum.dart';
 import 'package:game/constants/missile_enum.dart';
+import 'package:game/constants/planet_type_enum.dart';
 import 'package:game/types/event.dart';
 import 'package:game/types/missile_event_payload.dart';
+import 'package:game/ui/circular_range_indicator.dart';
 
 class RTSGame extends FlameGame with ScaleDetector {
   //planet for testing mainly
@@ -54,14 +57,15 @@ class RTSGame extends FlameGame with ScaleDetector {
       textRenderer: TextPaint(
         style: const TextStyle(
           color: Colors.white,
-          fontSize: 12,
+          fontSize: 24,
+          fontFamily: 'Minecraft',
         ),
       ),
     );
 
     planetA =
-        Planet(position: Vector2(-200, 0), assetData: AnimatedAsset.terra);
-    planetB = Planet(position: Vector2(200, 0), assetData: AnimatedAsset.terra);
+        Planet(position: Vector2(-200, 0), planetType: PlanetType.friendly);
+    planetB = Planet(position: Vector2(200, 0), planetType: PlanetType.enemy);
     //add HUD elements
     await camera.viewport.add(_playerScore);
     //add game elements
@@ -109,6 +113,7 @@ class RTSGame extends FlameGame with ScaleDetector {
             ),
             onComplete: () {
               world.remove(missile);
+              world.add(Explosion(position: payload.end));
             },
           )));
         return;
