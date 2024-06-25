@@ -15,8 +15,13 @@ double getTime(Vector2 p1, Vector2 p2, int speed) {
   return p1.distanceTo(p2) / speed;
 }
 
-dynamic getRandomItemFromList(List<dynamic> list){
+dynamic getRandomItemFromList(List<dynamic> list) {
   Random random = Random();
   int index = random.nextInt(list.length);
   return list[index];
+}
+
+//returns the coordinates that represnt a point lying on the circle centered at center, with radius radius at an anlge in radians
+Vector2 getCoordinatesAtAngle(Vector2 center, int radius, double angle) {
+  return Vector2(center.x + radius * cos(angle), center.y + radius * sin(angle) * -1);
 }

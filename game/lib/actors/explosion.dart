@@ -15,11 +15,11 @@ class Explosion extends SpriteAnimationComponent
   Future<void> onLoad() async {
     await super.onLoad();
     animation = SpriteAnimation.fromFrameData(
-      game.images.fromCache(AnimatedAsset.explosion.assetName),
+      game.images.fromCache(AnimatedAssetEnum.explosion.assetName),
       SpriteAnimationData.sequenced(
-        amount: AnimatedAsset.explosion.frameCount,
-        stepTime: AnimatedAsset.explosion.stepTime,
-        textureSize: AnimatedAsset.explosion.textureSize,
+        amount: AnimatedAssetEnum.explosion.frameCount,
+        stepTime: AnimatedAssetEnum.explosion.stepTime,
+        textureSize: AnimatedAssetEnum.explosion.textureSize,
         loop: false,
       ),
     );

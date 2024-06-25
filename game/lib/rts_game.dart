@@ -1,9 +1,10 @@
 import 'dart:async';
-import 'dart:math';
+
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/events.dart';
 import 'package:flame/experimental.dart';
+
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:game/actors/background.dart';
@@ -11,25 +12,29 @@ import 'package:game/actors/explosion.dart';
 import 'package:game/actors/missile.dart';
 import 'package:game/actors/planet.dart';
 import 'package:game/constants/animated_asset_enum.dart';
-import 'package:game/constants/constants.dart' as c;
+
 import 'package:game/constants/functions.dart';
 import 'package:game/constants/game_event_enum.dart';
-import 'package:game/constants/missile_enum.dart';
+
 import 'package:game/constants/planet_type_enum.dart';
+import 'package:game/constants/static_asset_enum.dart';
 import 'package:game/types/event.dart';
 import 'package:game/types/missile_event_payload.dart';
-import 'package:game/ui/circular_range_indicator.dart';
 
 class RTSGame extends FlameGame with ScaleDetector {
   //planet for testing mainly
-  late Planet planetA;
-  late Planet planetB;
+  final List<Planet> planets = [
+    Planet(position: Vector2(-200, 0), planetType: PlanetType.friendly),
+    Planet(position: Vector2(200, 0), planetType: PlanetType.enemy),
+    Planet(position: Vector2(0, 100), planetType: PlanetType.none),
+    Planet(position: Vector2(0, -100), planetType: PlanetType.none),
+  ];
   late TextComponent _playerScore;
   //events that will happen this cycle
   final _currentCommandList = List<Event>.empty(growable: true);
   //events that will happen next cycle
   final _nextCommandList = List<Event>.empty(growable: true);
-  final allowedCameraArea = Vector2(100, 400);
+  final allowedCameraArea = Vector2(200, 400);
   //Set background color
   @override
   Color backgroundColor() => Colors.black;
@@ -37,7 +42,11 @@ class RTSGame extends FlameGame with ScaleDetector {
   @override
   Future<void> onLoad() async {
     //load all images
-    await images.loadAll(c.imageAssets);
+    // await images.loadAll(c.imageAssets);
+    await Future.wait([
+      images.loadAll(AnimatedAssetEnum.values.map((e) => e.assetName).toList()),
+      images.loadAll(StaticAssetEnum.values.map((e) => e.assetName).toList())
+    ]);
 
     //create background
     final background = StarsBackground()..anchor = Anchor.center;
@@ -62,14 +71,12 @@ class RTSGame extends FlameGame with ScaleDetector {
         ),
       ),
     );
-
-    planetA =
-        Planet(position: Vector2(-200, 0), planetType: PlanetType.friendly);
-    planetB = Planet(position: Vector2(200, 0), planetType: PlanetType.enemy);
+    planets.addAll([]);
     //add HUD elements
     await camera.viewport.add(_playerScore);
     //add game elements
-    await world.addAll([background, planetA, planetB]);
+    await world.add(background);
+    await world.addAll(planets);
   }
 
   @override

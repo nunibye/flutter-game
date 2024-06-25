@@ -1,11 +1,12 @@
 import 'package:flame/components.dart';
+import 'package:game/constants/static_asset_enum.dart';
 import 'package:game/rts_game.dart';
 
 class StarsBackground extends SpriteComponent with HasGameReference<RTSGame> {
   static const backgroundSize = 800.0;
   @override
   Future<void> onLoad() async {
-    sprite = Sprite(game.images.fromCache("background.png"));
+    sprite = Sprite(game.images.fromCache(StaticAssetEnum.background.assetName));
     // *3 because background.png is pre-tiled to a 3 by 3
     size = Vector2.all(backgroundSize * 3);
     position = Vector2.zero();

@@ -8,10 +8,10 @@ class Missile extends SpriteComponent with HasGameReference<RTSGame>{
   final MissileData missileData;
   Missile({
     required this.missileData,
-  }) : super(size: missileData.size);
+  }) : super(size: missileData.size, anchor: Anchor.center);
 
   @override
   FutureOr<void> onLoad() {
-    sprite = Sprite(game.images.fromCache(missileData.assetName));
+    sprite = Sprite(game.images.fromCache(missileData.asset.assetName));
   }
 }

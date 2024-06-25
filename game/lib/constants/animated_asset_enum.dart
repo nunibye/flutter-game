@@ -1,6 +1,6 @@
 import 'package:flame/game.dart';
 
-enum AnimatedAsset {
+enum AnimatedAssetEnum {
   //list of textures
   friendlyPlanet1(assetName: 'friendly1.png', stepTime: 0.2, frameCount: 50),
   friendlyPlanet2(assetName: 'friendly2.png', stepTime: 0.2, frameCount: 50),
@@ -17,7 +17,7 @@ enum AnimatedAsset {
   final String assetName;
   final int frameCount;
   final double stepTime;
-  const AnimatedAsset(
+  const AnimatedAssetEnum(
       {required this.assetName,
       required this.frameCount,
       required this.stepTime});
@@ -25,7 +25,7 @@ enum AnimatedAsset {
 //getter since Vector2 is non const
   Vector2 get textureSize {
     switch (this) {
-      case AnimatedAsset.explosion:
+      case AnimatedAssetEnum.explosion:
         return Vector2.all(32);
       default:
         return Vector2.all(100);
