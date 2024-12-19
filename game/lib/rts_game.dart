@@ -20,21 +20,23 @@ import 'package:game/constants/planet_type_enum.dart';
 import 'package:game/constants/static_asset_enum.dart';
 import 'package:game/types/event.dart';
 import 'package:game/types/missile_event_payload.dart';
+import 'package:game/ui/planet_action_menu.dart';
 
 class RTSGame extends FlameGame with ScaleDetector {
   //planet for testing mainly
-  final List<Planet> planets = [
+  final List<Planet> _planets = [
     Planet(position: Vector2(-200, 0), planetType: PlanetType.friendly),
     Planet(position: Vector2(200, 0), planetType: PlanetType.enemy),
     Planet(position: Vector2(0, 100), planetType: PlanetType.none),
     Planet(position: Vector2(0, -100), planetType: PlanetType.none),
-  ];
+  ].asMap().entries.map((e) => e.value..id = e.key).toList();
   late TextComponent _playerScore;
   //events that will happen this cycle
   final _currentCommandList = List<Event>.empty(growable: true);
   //events that will happen next cycle
   final _nextCommandList = List<Event>.empty(growable: true);
-  final allowedCameraArea = Vector2(200, 400);
+  final _allowedCameraArea = Vector2(200, 400);
+  PlanetActionMenu? _currentPlanetMenu;
   //Set background color
   @override
   Color backgroundColor() => Colors.black;
@@ -55,7 +57,7 @@ class RTSGame extends FlameGame with ScaleDetector {
     camera.setBounds(
       Rectangle.fromCenter(
         center: Vector2.zero(),
-        size: allowedCameraArea,
+        size: _allowedCameraArea,
       ),
     );
 
@@ -71,12 +73,12 @@ class RTSGame extends FlameGame with ScaleDetector {
         ),
       ),
     );
-    planets.addAll([]);
+
     //add HUD elements
     await camera.viewport.add(_playerScore);
     //add game elements
     await world.add(background);
-    await world.addAll(planets);
+    await world.addAll(_planets);
   }
 
   @override
@@ -96,6 +98,22 @@ class RTSGame extends FlameGame with ScaleDetector {
     _currentCommandList.clear();
     _currentCommandList.addAll(_nextCommandList);
     _nextCommandList.clear();
+  }
+
+  //open the menu for a specified planet
+  void openPlanetMenu(int id) {
+    //only one menu can be open at a time.
+    closeCurrentPlanetMenu();
+    _currentPlanetMenu = PlanetActionMenu(position: _planets[id].position);
+    world.add(_currentPlanetMenu!);
+  }
+
+  //close the current planets menu.
+  void closeCurrentPlanetMenu() {
+    if (_currentPlanetMenu != null) {
+      world.remove(_currentPlanetMenu!);
+    }
+    _currentPlanetMenu = null;
   }
 
   void addEvent(Event e) {

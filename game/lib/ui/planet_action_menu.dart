@@ -22,7 +22,7 @@ class PlanetActionMenuItem extends SpriteButtonComponent
   PlanetActionMenuItem({required this.type})
       : super(
           anchor: Anchor.center,
-          size: Vector2.all(c.planetMenuItemRadius * 1.0),
+          size: Vector2.all(c.planetMenuItemRadius),
         );
   @override
   FutureOr<void> onLoad() {

@@ -4,14 +4,14 @@ import 'package:game/constants/animated_asset_enum.dart';
 import 'package:game/constants/functions.dart';
 import 'package:game/constants/planet_type_enum.dart';
 import 'package:game/rts_game.dart';
-
-import 'package:game/ui/planet_action_menu.dart';
+import 'package:game/constants/constants.dart' as c;
 
 class Planet extends SpriteAnimationComponent
     with HasGameReference<RTSGame>, TapCallbacks {
   final PlanetType planetType;
-  Planet({required super.position, required this.planetType})
-      : super(size: Vector2.all(50), anchor: Anchor.center);
+  int id;
+  Planet({required super.position, required this.planetType, this.id = 0})
+      : super(size: Vector2.all(c.planetSize), anchor: Anchor.center);
 
   AnimatedAssetEnum chooseAsset() {
     switch (planetType) {
@@ -44,7 +44,6 @@ class Planet extends SpriteAnimationComponent
     animation = SpriteAnimation.fromFrameData(
       game.images.fromCache(assetData.assetName),
       SpriteAnimationData.sequenced(
-        
         amount: assetData.frameCount,
         stepTime: assetData.stepTime,
         textureSize: assetData.textureSize,
@@ -55,7 +54,11 @@ class Planet extends SpriteAnimationComponent
   @override
   void onTapDown(TapDownEvent event) {
     super.onTapDown(event);
-    add(PlanetActionMenu(position: size / 2));
+    if (planetType == PlanetType.friendly) {
+      game.openPlanetMenu(id);
+    }
+
+    // game.world.add(PlanetActionMenu(position: position));
     // game.addEvent(Event(
     //     type: GameEvent.missileLaunch,
     //     payload: MissileEventPayload(
